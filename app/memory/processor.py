@@ -18,9 +18,9 @@ Chat Text:
 JSON Output:
 """
 
-    def process_chat(self, text: str):
+    def process_chat(self, text: str, namespace: str = "default"):
         # 1. Store the raw chat log for future context
-        self.vector_db.add_chat_log(text)
+        self.vector_db.add_chat_log(text, namespace=namespace)
         
         # 2. Extract facts and relationships
         prompt = self.extraction_prompt.format(text=text)
@@ -37,33 +37,33 @@ JSON Output:
 
             # 3. Store extracted facts
             for fact in data.get("facts", []):
-                self.vector_db.add_fact(fact)
+                self.vector_db.add_fact(fact, namespace=namespace)
             
             # 4. Store extracted relationships
             for rel in data.get("relationships", []):
-                self.graph_db.add_relationship(rel["subject"], rel["relation"], rel["object"])
+                self.graph_db.add_relationship(rel["subject"], rel["relation"], rel["object"], namespace=namespace)
                 
             return data
         except Exception as e:
             return {"error": str(e), "raw": raw_output}
 
-    def retrieve_all(self, query: str):
+    def retrieve_all(self, query: str, namespace: str = "default"):
         # 1. Vector Search (Facts and Chat logs)
-        facts = self.vector_db.query_facts(query, n_results=5)
-        chat_logs = self.vector_db.query_chat(query, n_results=3)
+        facts = self.vector_db.query_facts(query, n_results=5, namespace=namespace)
+        chat_logs = self.vector_db.query_chat(query, n_results=3, namespace=namespace)
         
         # 2. Graph Search
-        relationships = self.graph_db.find_relationships_for_query(query)
+        relationships = self.graph_db.find_relationships_for_query(query, namespace=namespace)
         
         return {
-            "facts": facts["documents"][0],
-            "chat_logs": chat_logs["documents"][0],
+            "facts": facts["documents"][0] if facts["documents"] else [],
+            "chat_logs": chat_logs["documents"][0] if chat_logs["documents"] else [],
             "relationships": relationships
         }
 
-    def retrieve_targeted(self, query: str):
+    def retrieve_targeted(self, query: str, namespace: str = "default"):
         # 1. Get all relevant context
-        context_data = self.retrieve_all(query)
+        context_data = self.retrieve_all(query, namespace=namespace)
         
         # 2. Format context for the LLM
         context_str = "Relevant Facts:\n" + "\n".join(context_data["facts"])

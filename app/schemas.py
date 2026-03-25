@@ -3,6 +3,7 @@ from typing import List, Optional, Union
 
 class ChatStoreRequest(BaseModel):
     text: str
+    namespace: str = "default"
 
 class TargetedStoreRequest(BaseModel):
     content: str
@@ -10,9 +11,11 @@ class TargetedStoreRequest(BaseModel):
     subject: Optional[str] = None
     relation: Optional[str] = None
     object: Optional[str] = None
+    namespace: str = "default"
 
 class RetrievalRequest(BaseModel):
     query: str
+    namespace: str = "default"
 
 class Relationship(BaseModel):
     subject: str

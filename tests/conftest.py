@@ -31,9 +31,9 @@ def mock_graph_db(temp_dir):
     # Fresh graph storage for each test
     g = GraphStorage()
     g.db_path = os.path.join(temp_dir, "graph_test.json")
-    # Reset internal graph
+    # Reset internal graph to MultiDiGraph
     import networkx as nx
-    g.graph = nx.DiGraph()
+    g.graph = nx.MultiDiGraph()
     return g
 
 @pytest.fixture

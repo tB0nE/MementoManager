@@ -15,40 +15,44 @@ class VectorStorage:
         # Collection for raw chat logs (for context retrieval)
         self.chat_collection = self.client.get_or_create_collection(name="chat_history")
 
-    def add_fact(self, content: str, metadata: dict = None):
+    def add_fact(self, content: str, metadata: dict = None, namespace: str = "default"):
         import uuid
         fact_id = str(uuid.uuid4())
-        kwargs = {
-            "documents": [content],
-            "ids": [fact_id]
-        }
-        if metadata:
-            kwargs["metadatas"] = [metadata]
-        self.facts_collection.add(**kwargs)
+        meta = metadata or {}
+        meta["namespace"] = namespace
+        
+        self.facts_collection.add(
+            documents=[content],
+            metadatas=[meta],
+            ids=[fact_id]
+        )
         return fact_id
 
-    def add_chat_log(self, content: str, metadata: dict = None):
+    def add_chat_log(self, content: str, metadata: dict = None, namespace: str = "default"):
         import uuid
         chat_id = str(uuid.uuid4())
-        kwargs = {
-            "documents": [content],
-            "ids": [chat_id]
-        }
-        if metadata:
-            kwargs["metadatas"] = [metadata]
-        self.chat_collection.add(**kwargs)
+        meta = metadata or {}
+        meta["namespace"] = namespace
+        
+        self.chat_collection.add(
+            documents=[content],
+            metadatas=[meta],
+            ids=[chat_id]
+        )
         return chat_id
 
-    def query_facts(self, query_text: str, n_results: int = 5):
+    def query_facts(self, query_text: str, n_results: int = 5, namespace: str = "default"):
         return self.facts_collection.query(
             query_texts=[query_text],
-            n_results=n_results
+            n_results=n_results,
+            where={"namespace": namespace}
         )
 
-    def query_chat(self, query_text: str, n_results: int = 5):
+    def query_chat(self, query_text: str, n_results: int = 5, namespace: str = "default"):
         return self.chat_collection.query(
             query_texts=[query_text],
-            n_results=n_results
+            n_results=n_results,
+            where={"namespace": namespace}
         )
 
 # Singleton instance

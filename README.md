@@ -7,6 +7,7 @@ A high-performance, locally-hosted memory management module designed for use wit
 - **Auto-Extraction:** Automatically parses raw chat logs into structured facts and relationships using your local LLM.
 - **RAG + GraphRAG:** Retrieval combines semantic similarity with graph-based neighbor traversal.
 - **Optimized for RTX 3090:** Pre-configured for `llama-cpp-python` with CUDA acceleration.
+- **Isolated Namespaces:** Support for multiple applications/agents using isolated memory "silos" via the `namespace` parameter.
 
 ---
 
@@ -52,29 +53,31 @@ A comprehensive test suite for storage, API logic, and live LLM performance.
 
 ## 📡 API Endpoints
 
+All endpoints accept an optional `"namespace": "string"` field (defaults to `"default"`).
+
 ### 1. `POST /store/chat`
 Sends raw text to the LLM to extract facts and relationships automatically.
-- **Body:** `{ "text": "I live in London with my cat, Luna." }`
-- **Result:** Extracts "User lives in London" (Fact) and "User -> owns -> Luna" (Relationship).
+- **Body:** `{ "text": "I live in London with my cat, Luna.", "namespace": "agent_alpha" }`
+- **Result:** Extracts "User lives in London" (Fact) and "User -> owns -> Luna" (Relationship) into the `agent_alpha` silo.
 
 ### 2. `POST /store/targeted`
 Manually inject a specific piece of data.
-- **Fact Body:** `{ "content": "The password to the safe is 1234", "type": "fact" }`
+- **Fact Body:** `{ "content": "The password to the safe is 1234", "type": "fact", "namespace": "private" }`
 - **Relationship Body:** `{ "content": "Ty is married to Karen", "type": "relationship", "subject": "Ty", "relation": "married_to", "object": "Karen" }`
 
 ### 3. `POST /retrieve/all` (Context Search)
-Returns a "brain dump" of everything semantically or relationally relevant to the query.
-- **Body:** `{ "query": "What do you know about Ty's family?" }`
+Returns a "brain dump" of everything semantically or relationally relevant to the query within a specific namespace.
+- **Body:** `{ "query": "What do you know about Ty's family?", "namespace": "default" }`
 
 ### 4. `POST /retrieve/targeted` (Answer Mode)
-Uses the RAG pipeline to provide a concise, human-like answer to a specific question.
-- **Body:** `{ "query": "What is Ty's wife's name?" }`
+Uses the RAG pipeline to provide a concise, human-like answer based on a specific namespace's memory.
+- **Body:** `{ "query": "What is Ty's wife's name?", "namespace": "default" }`
 - **Response:** `{ "answer": "Her name is Karen." }`
 
 ---
 
 ## 🏗️ Architecture
 - **Vector Brain (ChromaDB):** Stores text "chunks" and facts. High-speed semantic lookup.
-- **Relational Brain (NetworkX):** Stores an entity-relationship graph (Subject -> Relation -> Object). Allows the API to "connect the dots" between people and concepts.
+- **Relational Brain (NetworkX):** Stores an entity-relationship graph. Uses `MultiDiGraph` to allow the same entities to have different relationships across different namespaces.
 - **Extraction Layer:** Uses a custom prompt to turn unstructured chat data into clean JSON for storage.
 - **Synthesis Layer:** Combines retrieved context into a final prompt for the LLM to generate natural responses.
