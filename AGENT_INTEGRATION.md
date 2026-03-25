@@ -52,6 +52,21 @@ def ask_memory(question: str):
     """Asks the memory a specific question and gets a synthesized answer."""
     payload = {"query": question, "namespace": NAMESPACE}
     return requests.post(f"{BASE_URL}/retrieve/targeted", json=payload).json()
+
+def forget_memory(query: str):
+    """Removes facts or relationships matching the query."""
+    payload = {"query": query, "namespace": NAMESPACE}
+    return requests.post(f"{BASE_URL}/memory/forget", json=payload).json()
+
+def update_fact(old_fact: str, new_fact: str):
+    """Replaces an old fact with a new one."""
+    payload = {
+        "old_content": old_fact,
+        "new_content": new_fact,
+        "type": "fact",
+        "namespace": NAMESPACE
+    }
+    return requests.post(f"{BASE_URL}/memory/update", json=payload).json()
 ```
 
 ---

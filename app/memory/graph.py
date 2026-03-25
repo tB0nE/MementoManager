@@ -66,5 +66,21 @@ class GraphStorage:
                 found_relationships.extend(self.get_related_entities(node, namespace=namespace))
         return found_relationships
 
+    def remove_relationship(self, subject: str, relation: str, obj: str, namespace: str = "default"):
+        s, r, o = subject.lower().strip(), relation.lower().strip(), obj.lower().strip()
+        if not self.graph.has_edge(s, o):
+            return False
+            
+        keys_to_remove = []
+        for key, data in self.graph.get_edge_data(s, o).items():
+            if data.get("relation") == r and data.get("namespace") == namespace:
+                keys_to_remove.append(key)
+        
+        for key in keys_to_remove:
+            self.graph.remove_edge(s, o, key=key)
+            
+        self._save_graph()
+        return len(keys_to_remove) > 0
+
 # Singleton instance
 graph_db = GraphStorage()

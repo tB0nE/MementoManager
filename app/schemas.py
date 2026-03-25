@@ -17,6 +17,19 @@ class RetrievalRequest(BaseModel):
     query: str
     namespace: str = "default"
 
+class ForgetRequest(BaseModel):
+    query: str
+    namespace: str = "default"
+
+class UpdateStoreRequest(BaseModel):
+    old_content: str
+    new_content: str
+    type: str # "fact" or "relationship"
+    subject: Optional[str] = None
+    relation: Optional[str] = None
+    object: Optional[str] = None
+    namespace: str = "default"
+
 class Relationship(BaseModel):
     subject: str
     relation: str

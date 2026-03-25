@@ -55,5 +55,21 @@ class VectorStorage:
             where={"namespace": namespace}
         )
 
+    def delete_facts(self, query_text: str, namespace: str = "default"):
+        # Find matches first
+        results = self.query_facts(query_text, n_results=5, namespace=namespace)
+        if results["ids"] and results["ids"][0]:
+            # Delete the top match for now (conservative)
+            self.facts_collection.delete(ids=[results["ids"][0][0]])
+            return True
+        return False
+
+    def delete_chat_logs(self, query_text: str, namespace: str = "default"):
+        results = self.query_chat(query_text, n_results=5, namespace=namespace)
+        if results["ids"] and results["ids"][0]:
+            self.chat_collection.delete(ids=[results["ids"][0][0]])
+            return True
+        return False
+
 # Singleton instance
 vector_db = VectorStorage()

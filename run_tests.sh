@@ -13,7 +13,7 @@ fi
 # Function to run tests
 run_fast_tests() {
     echo "Running fast tests (Storage & Mocked API)..."
-    PYTHONPATH=. .venv/bin/pytest tests/test_storage.py tests/test_api_mocked.py tests/test_namespaces.py
+    PYTHONPATH=. .venv/bin/pytest tests/test_storage.py tests/test_api_mocked.py tests/test_namespaces.py tests/test_forget_update.py
 }
 
 run_live_tests() {

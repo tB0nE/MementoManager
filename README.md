@@ -74,6 +74,15 @@ Uses the RAG pipeline to provide a concise, human-like answer based on a specifi
 - **Body:** `{ "query": "What is Ty's wife's name?", "namespace": "default" }`
 - **Response:** `{ "answer": "Her name is Karen." }`
 
+### 5. `POST /memory/forget`
+Removes information matching a query from both vector and graph stores.
+- **Body:** `{ "query": "Forget the secret code", "namespace": "private" }`
+
+### 6. `POST /memory/update`
+Replaces old information with new data.
+- **Fact Body:** `{ "old_content": "Ty is 42", "new_content": "Ty is 43", "type": "fact", "namespace": "test" }`
+- **Relationship Body:** `{ "subject": "Alice", "relation": "friend", "object": "Bob", "type": "relationship" }`
+
 ---
 
 ## 🏗️ Architecture
