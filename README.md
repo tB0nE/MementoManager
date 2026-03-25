@@ -63,16 +63,16 @@ Sends raw text to the LLM to extract facts and relationships automatically.
 ### 2. `POST /store/targeted`
 Manually inject a specific piece of data.
 - **Fact Body:** `{ "content": "The password to the safe is 1234", "type": "fact", "namespace": "private" }`
-- **Relationship Body:** `{ "content": "Ty is married to Karen", "type": "relationship", "subject": "Ty", "relation": "married_to", "object": "Karen" }`
+- **Relationship Body:** `{ "content": "John is married to Jane", "type": "relationship", "subject": "John", "relation": "married_to", "object": "Jane" }`
 
 ### 3. `POST /retrieve/all` (Context Search)
 Returns a "brain dump" of everything semantically or relationally relevant to the query within a specific namespace.
-- **Body:** `{ "query": "What do you know about Ty's family?", "namespace": "default" }`
+- **Body:** `{ "query": "What do you know about John's family?", "namespace": "default" }`
 
 ### 4. `POST /retrieve/targeted` (Answer Mode)
 Uses the RAG pipeline to provide a concise, human-like answer based on a specific namespace's memory.
-- **Body:** `{ "query": "What is Ty's wife's name?", "namespace": "default" }`
-- **Response:** `{ "answer": "Her name is Karen." }`
+- **Body:** `{ "query": "What is John's wife's name?", "namespace": "default" }`
+- **Response:** `{ "answer": "Her name is Jane." }`
 
 ### 5. `POST /memory/forget`
 Removes information matching a query from both vector and graph stores.
@@ -80,7 +80,7 @@ Removes information matching a query from both vector and graph stores.
 
 ### 6. `POST /memory/update`
 Replaces old information with new data.
-- **Fact Body:** `{ "old_content": "Ty is 42", "new_content": "Ty is 43", "type": "fact", "namespace": "test" }`
+- **Fact Body:** `{ "old_content": "John is 42", "new_content": "John is 43", "type": "fact", "namespace": "test" }`
 - **Relationship Body:** `{ "subject": "Alice", "relation": "friend", "object": "Bob", "type": "relationship" }`
 
 ---

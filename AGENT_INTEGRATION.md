@@ -84,9 +84,9 @@ If you are using an agent that supports OpenAI-style tool calling, provide these
     "properties": {
       "content": {"type": "string", "description": "The fact to remember."},
       "type": {"type": "string", "enum": ["fact", "relationship"]},
-      "subject": {"type": "string", "description": "For relationships only (e.g. 'Ty')"},
+      "subject": {"type": "string", "description": "For relationships only (e.g. 'John')"},
       "relation": {"type": "string", "description": "For relationships only (e.g. 'is_married_to')"},
-      "object": {"type": "string", "description": "For relationships only (e.g. 'Karen')"}
+      "object": {"type": "string", "description": "For relationships only (e.g. 'Jane')"}
     },
     "required": ["content", "type"]
   }
